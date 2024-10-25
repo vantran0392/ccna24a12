@@ -1,0 +1,14 @@
+---
+- name: "Create VLAN"
+  hosts: all
+  gather_facts: no
+  
+  tasks:
+    - name: Show Vlan
+      cisco.ios.ios_command:
+        commands: 
+          - show vlan
+      register: show_vlan
+      
+    - debug: 
+      msg: "{{show_vlan.stdout_lines}}"
