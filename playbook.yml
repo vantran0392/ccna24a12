@@ -1,14 +1,23 @@
 ---
-- name: "Create VLAN"
+- name: Configure Loopback Interface on Router104
   hosts: all
   gather_facts: no
-  
+  connection: network_cli
+
   tasks:
-    - name: Show Vlan
-      cisco.ios.ios_command:
-        commands: 
-          - show vlan
-      register: show_vlan
-      
-    - debug: 
-      msg: "{{show_vlan.stdout_lines}}"
+    - name: Configure Loopback0 interface with IP 7.7.7.7
+      ios_config:
+        lines:
+          - interface Loopback0
+          - ip address 7.7.7.7 255.255.255.255
+          - no shutdown
+
+    - name: Verify Loopback0 Interface Configuration
+      ios_command:
+        commands:
+          - show ip interface brief | include Loopback0
+      register: loopback_output
+
+    - name: Display Verification Output
+      debug:
+        var: loopback_output.stdout_lines
